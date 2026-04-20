@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Frame Viewer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      height: 100vh;
+      display: flex;
+    }
+
+    .col {
+      height: 100%;
+      border-right: 1px solid #fff;
+    }
+
+    .col:last-child { border-right: none; }
+
+    .left  { width: 20%; }
+    .center {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .center h1 {
+      color: #fff;
+      font-family: 'Pinyon Script', cursive;
+      font-size: 4em;
+      font-weight: normal;
+      text-align: center;
+      margin-bottom: 0.4em;
+    }
+    .right { width: 20%; }
+
+    .left, .right {
+      overflow: hidden;
+      padding: 1em;
+      color: #fff;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 1em;
+      text-align: justify;
+    }
+
+    .left p, .right p {
+      margin-bottom: 1em;
+    }
+
+    .left p:last-child, .right p:last-child {
+      margin-bottom: 0;
+    }
+
+    .center img {
+      width: 80%;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="col left" id="col-left"></div>
+  <div class="col center">
+    <h1>National Gallery</h1>
+    <img id="frame" style="width:80%;" />
+  </div>
+  <div class="col right" id="col-right"></div>
+
+  <script>
+    // ── Lorem Ipsum paragraphs ────────────────────────────────────────────────
+    const paragraphs = [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
+      "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.",
+      "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
+    ];
+
+    function fillColumn(id) {
+      const col = document.getElementById(id);
+      let i = 0;
+      while (col.scrollHeight <= col.clientHeight) {
+        const p = document.createElement('p');
+        p.textContent = paragraphs[i % paragraphs.length];
+        col.appendChild(p);
+        i++;
+        // Safety limit
+        if (i > 200) break;
+      }
+      // Remove last paragraph if it overflows
+      while (col.scrollHeight > col.clientHeight && col.lastChild) {
+        col.removeChild(col.lastChild);
+      }
+    }
+
+    fillColumn('col-left');
+    fillColumn('col-right');
+
+    // ── Frame viewer ─────────────────────────────────────────────────────────
+    const frames = Array.from({length: 1070}, (_, i) =>
+      `img/NG-${String(i+1).padStart(5,'0')}.jpg`
+    );
+
+    let current = 0;
+    const img = document.getElementById('frame');
+
+    function show(i) {
+      current = Math.max(0, Math.min(frames.length - 1, i));
+      img.src = frames[current];
+    }
+
+    show(0);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowUp')   { e.preventDefault(); show(current + 1); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); show(current - 1); }
+    });
+  </script>
+</body>
+</html>
